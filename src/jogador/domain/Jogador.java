@@ -1,6 +1,6 @@
-package futebol.jogador.domain;
+package jogador.domain;
 
-import futebol.clube.domain.Clube;
+import clube.domain.Clube;
 
 import java.io.Serializable;
 

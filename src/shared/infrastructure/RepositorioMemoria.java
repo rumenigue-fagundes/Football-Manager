@@ -1,6 +1,6 @@
-package futebol.shared.infrastructure;
+package shared.infrastructure;
 
-import futebol.shared.application.Repositorio;
+import shared.application.Repositorio;
 
 import java.util.ArrayList;
 import java.util.Collections;

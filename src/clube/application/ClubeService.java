@@ -1,8 +1,8 @@
-package futebol.clube.application;
+package clube.application;
 
-import futebol.clube.domain.Clube;
-import futebol.jogador.domain.Jogador;
-import futebol.shared.application.Repositorio;
+import clube.domain.Clube;
+import jogador.domain.Jogador;
+import shared.application.Repositorio;
 
 import java.util.ArrayList;
 import java.util.List;

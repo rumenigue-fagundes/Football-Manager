@@ -1,11 +1,11 @@
-package futebol.jogador.application;
+package jogador.application;
 
-import futebol.clube.domain.Clube;
-import futebol.jogador.domain.Goleiro;
-import futebol.jogador.domain.Jogador;
-import futebol.jogador.domain.JogadorLinha;
-import futebol.jogador.domain.PosicaoLinha;
-import futebol.shared.application.Repositorio;
+import clube.domain.Clube;
+import jogador.domain.Goleiro;
+import jogador.domain.Jogador;
+import jogador.domain.JogadorLinha;
+import jogador.domain.PosicaoLinha;
+import shared.application.Repositorio;
 
 import java.util.List;
 

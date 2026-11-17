@@ -1,11 +1,11 @@
-import futebol.clube.application.ClubeService;
-import futebol.clube.domain.Clube;
-import futebol.jogador.application.JogadorService;
-import futebol.jogador.domain.Goleiro;
-import futebol.jogador.domain.Jogador;
-import futebol.jogador.domain.JogadorLinha;
-import futebol.jogador.domain.PosicaoLinha;
-import futebol.shared.infrastructure.RepositorioMemoria;
+import clube.application.ClubeService;
+import clube.domain.Clube;
+import jogador.application.JogadorService;
+import jogador.domain.Goleiro;
+import jogador.domain.Jogador;
+import jogador.domain.JogadorLinha;
+import jogador.domain.PosicaoLinha;
+import shared.infrastructure.RepositorioMemoria;
 
 /**
  * Main PROVISÓRIO: valida Domain e Application pelo console.

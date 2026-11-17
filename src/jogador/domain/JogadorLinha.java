@@ -1,4 +1,4 @@
-package futebol.jogador.domain;
+package jogador.domain;
 
 public class JogadorLinha extends Jogador {
     private PosicaoLinha posicao;
