@@ -1,0 +1,125 @@
+@startuml
+
+interface GerenciadorJogadores {
+    + adicionarJogador(jogador: Jogador)
+    + removerJogador(jogador: Jogador)
+}
+
+class Clube {
+- id : int
+- nome : String
+- cidade : String
+- elenco<Jogador> 
+}
+
+abstract class Jogador {
+- id: int
+- nome: String
+- idade: int
+- numeroCamisa: int
++getPosicaoPrincipal()
+}
+
+class JogadorLinha {
+- posicao: PosicaoLinha
+}
+
+class Goleiro {
+
+}
+
+class Campeonato {
+- id : int
+- nome : String
+- temporada : int
++ adicionarParticipante(clube: Clube)
++ adicionarPartida(partida: Partida)
+}
+
+class Partida {
+- id : int
+- data : LocalDateTime
+- golsMandante : int
+- golsVisitante : int
+- status : StatusPartida
++ finalizar()
++ definirResultado(golsMandante: int, golsVisitante: int)
+}
+
+class Escalacao {
+- clube: Clube
+- elenco<Jogador>
+~ fechada : boolean
++ adicionarJogador()
++ removerJogador()
+~ fechar()
+}
+
+class Participacao {
+- gols : int
+- assistencias : int
+- cartoesAmarelos : int
+- cartoesVermelhos : int
+~ fechada : boolean
++ registrarGol()
++ registrarAssistencia()
++ registrarCartaoAmarelo()
++ registrarCartaoVermelho()
+~ fechar()
+}
+
+class EstatisticasClube {
+    - vitorias: int
+    - empates: int
+    - derrotas: int
+    - golsMarcados: int
+    - golsSofridos: int
+    + registrarPartida(golsMarcados: int, golsSofridos: int)
+    + getPontos(): int
+}
+
+class EstatisticasJogador {
+    - partidasDisputadas: int
+    - gols: int
+    - assistencias: int
+    - cartoesAmarelos: int
+    - cartoesVermelhos: int
+    + registrarParticipacao(p: Participacao)
+}
+
+enum PosicaoLinha {
+ZAGUEIRO
+LATERAL
+MEIO_CAMPO
+ATACANTE
+}
+
+enum StatusPartida {
+AGENDADA
+FINALIZADA
+}
+
+JogadorLinha --|> Jogador
+Goleiro --|> Jogador
+
+Clube ..|> GerenciadorJogadores
+Escalacao ..|> GerenciadorJogadores
+
+Clube "0..1" -- "0..*" Jogador : elenco
+
+Campeonato "0..*" --> "0..*" Clube : participantes
+Campeonato "1" *-- "0..*" Partida : partidas
+
+Partida "1" *-- "1" Escalacao : mandante
+Partida "1" *-- "1" Escalacao : visitante
+
+Escalacao "0..*" --> "1" Clube : clube
+Escalacao "1" *-- "0..11" Participacao : participacoes
+
+Participacao "0..*" --> "1" Jogador
+
+EstatisticasClube "0..*" --> "1" Clube
+EstatisticasJogador "0..*" --> "1" Jogador
+EstatisticasJogador ..> Participacao
+
+@enduml
