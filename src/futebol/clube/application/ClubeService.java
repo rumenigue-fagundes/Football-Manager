@@ -82,4 +82,30 @@ public class ClubeService {
         return clube.getElenco();
     }
 
+    public void transferir(int jogadorId, int clubeDestinoId){
+        Jogador jogador = repositorioJogadores.buscarPorId(jogadorId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Jogador não encontrado"
+                ));
+        Clube destino = buscar(clubeDestinoId);
+        Clube origem = jogador.getClube();
+
+        if (origem == destino) {
+            throw new IllegalArgumentException("Jogador já está nesse clube.");
+        }
+
+        if (origem != null) {
+            origem.removerJogador(jogador);
+        }
+
+        try {
+            destino.adicionarJogador(jogador);
+        } catch (IllegalArgumentException e) {
+            if (origem != null) {
+                origem.adicionarJogador(jogador); //desfaz a saída
+            }
+            throw e; //avisa quem chamou
+        }
+    }
+
 }

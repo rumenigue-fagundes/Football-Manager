@@ -40,11 +40,16 @@ public class JogadorService {
         return repositorio.listarTodos();
     }
 
-    public void editar(int id, String nome, int idade) {
+    public void editar(int id, String nome, int idade, int numeroCamisa, PosicaoLinha posicao){
         Jogador jogador = buscar(id);
 
         jogador.setNome(nome);
         jogador.setIdade(idade);
+        jogador.setNumeroCamisa(numeroCamisa);
+
+        if (jogador instanceof JogadorLinha linha){
+            linha.setPosicao(posicao);
+        }
 
         repositorio.salvar(jogador);
     }
