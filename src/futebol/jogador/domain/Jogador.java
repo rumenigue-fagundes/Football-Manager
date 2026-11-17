@@ -2,8 +2,11 @@ package futebol.jogador.domain;
 
 import futebol.clube.domain.Clube;
 
-public abstract class Jogador {
+import java.io.Serializable;
 
+public abstract class Jogador implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private int id;
     private String nome;
     private int idade;

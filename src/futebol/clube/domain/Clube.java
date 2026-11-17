@@ -2,12 +2,14 @@ package futebol.clube.domain;
 
 import futebol.jogador.domain.Jogador;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Clube implements GerenciadorJogadores {
+public class Clube implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private int id;
     private String nome;
     private String cidade;
@@ -26,7 +28,6 @@ public class Clube implements GerenciadorJogadores {
         this.elenco = new ArrayList<>();
     }
 
-    @Override
     public void adicionarJogador(Jogador jogador) {
         if (jogador == null) {
             throw new IllegalArgumentException("Jogador inválido.");
@@ -48,7 +49,6 @@ public class Clube implements GerenciadorJogadores {
         jogador.setClube(this);
     }
 
-    @Override
     public void removerJogador(Jogador jogador) {
         if (jogador == null) {
             throw new IllegalArgumentException("Jogador inválido.");
