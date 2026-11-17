@@ -54,9 +54,14 @@ public class Clube implements Serializable {
             throw new IllegalArgumentException("Jogador inválido.");
         }
 
-        if (elenco.remove(jogador)) {
-            jogador.setClube(null);
+        if (!elenco.contains(jogador)) {
+            throw new IllegalArgumentException(
+                    "Jogador não pertence a esse clube."
+            );
         }
+
+        elenco.remove(jogador);
+        jogador.setClube(null);
     }
 
     public int getId() {

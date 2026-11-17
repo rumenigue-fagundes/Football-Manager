@@ -9,9 +9,11 @@ import java.util.List;
 
 public class ClubeService {
     private final Repositorio<Clube> repositorio;
+    private final Repositorio<Jogador> repositorioJogadores;
 
-    public ClubeService(Repositorio<Clube> repositorio) {
+    public ClubeService(Repositorio<Clube> repositorio, Repositorio<Jogador> repositorioJogadores) {
         this.repositorio = repositorio;
+        this.repositorioJogadores = repositorioJogadores;
     }
 
     public Clube criar(String nome, String cidade) {
@@ -54,11 +56,30 @@ public class ClubeService {
                 Clube::getId).max().orElse(0) + 1;
     }
 
-    /* public void adicionarJogador(clubeId, jogadorId) {
+    public void adicionarJogador(int clubeId, int jogadorId) {
         Clube clube = buscar(clubeId);
-        Jogador jogador = buscar(jogadorId);
+        Jogador jogador = repositorioJogadores.buscarPorId(jogadorId)
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Jogador não encontrado."
+                        ));
 
         clube.adicionarJogador(jogador);
     }
-    */ //TODO
+
+    public void removerJogador(int clubeId, int jogadorId) {
+        Clube clube = buscar(clubeId);
+        Jogador jogador = repositorioJogadores.buscarPorId(jogadorId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Jogador não encontrado."
+                ));
+
+        clube.removerJogador(jogador);
+    }
+
+    public List<Jogador> listarElenco(int clubeId){
+        Clube clube = buscar(clubeId);
+
+        return clube.getElenco();
+    }
+
 }
