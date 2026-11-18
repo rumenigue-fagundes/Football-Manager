@@ -8,4 +8,7 @@ public interface Repositorio<T> {
     Optional<T> buscarPorId(int id);
     List<T> listarTodos();
     void remover(int id);
+
+    void gravar();
+    void carregar();
 }

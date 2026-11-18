@@ -10,10 +10,15 @@ import java.util.function.Function;
 
 public class RepositorioMemoria<T> implements Repositorio<T> {
 
-    private final List<T> itens = new ArrayList<>();
+    private final List<T> itens;
     private final Function<T, Integer> extratorId;
 
     public RepositorioMemoria(Function<T, Integer> extratorId) {
+        this(new ArrayList<>(), extratorId);
+    }
+
+    RepositorioMemoria(List<T> itens, Function<T, Integer> extratorId){
+        this.itens = itens;
         this.extratorId = extratorId;
     }
 
@@ -46,5 +51,15 @@ public class RepositorioMemoria<T> implements Repositorio<T> {
     @Override
     public void remover(int id) {
         itens.removeIf(item -> extratorId.apply(item) == id);
+    }
+
+    @Override
+    public void gravar() {
+
+    }
+
+    @Override
+    public void carregar() {
+
     }
 }
