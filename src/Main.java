@@ -5,7 +5,17 @@ import jogador.domain.Goleiro;
 import jogador.domain.Jogador;
 import jogador.domain.JogadorLinha;
 import jogador.domain.PosicaoLinha;
+import shared.application.PersistenciaService;
+import shared.application.Repositorio;
+import shared.infrastructure.DadosSistema;
+import shared.infrastructure.RepositorioArquivo;
 import shared.infrastructure.RepositorioMemoria;
+import shared.application.PersistenciaService;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Main PROVISÓRIO: valida Domain e Application pelo console.
@@ -16,7 +26,7 @@ public class Main {
     private static int aprovados = 0;
     private static int falhas = 0;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         RepositorioMemoria<Clube> repositorioClubes = new RepositorioMemoria<>(Clube::getId);
         RepositorioMemoria<Jogador> repositorioJogadores = new RepositorioMemoria<>(Jogador::getId);
 
@@ -143,6 +153,37 @@ public class Main {
         verificar("jogadores do clube excluído ficaram sem clube",
                 falcao.getClube() == null && alisson.getClube() == null
                         && dale.getClube() == null && kannemann.getClube() == null);
+
+        titulo("6. PERSISTÊNCIA");
+        Path arquivo = Paths.get("dados_teste", "teste.dat");
+        Files.deleteIfExists(arquivo);
+
+        DadosSistema dados1 = new DadosSistema();
+        Repositorio<Clube> rc1 = new RepositorioArquivo<>(dados1, DadosSistema::getClubes, Clube::getId, arquivo);
+        Repositorio<Jogador> rj1 = new RepositorioArquivo<>(dados1, DadosSistema::getJogadores, Jogador::getId, arquivo);
+        ClubeService cs1 = new ClubeService(rc1, rj1);
+        JogadorService js1 = new JogadorService(rj1);
+        PersistenciaService p1 = new PersistenciaService(rc1, rj1);
+
+        Clube g = cs1.criar("Grêmio", "Porto Alegre");
+        JogadorLinha r = js1.criarLinha("Renato", 21, 7, PosicaoLinha.ATACANTE);
+        js1.criarLinha("Sem Clube", 25, 11, PosicaoLinha.LATERAL);
+        cs1.adicionarJogador(g.getId(), r.getId());
+        p1.salvar();
+
+        DadosSistema dados2 = new DadosSistema();   // sessão nova: tudo vazio
+        Repositorio<Clube> rc2 = new RepositorioArquivo<>(dados2, DadosSistema::getClubes, Clube::getId, arquivo);
+        Repositorio<Jogador> rj2 = new RepositorioArquivo<>(dados2, DadosSistema::getJogadores, Jogador::getId, arquivo);
+        ClubeService cs2 = new ClubeService(rc2, rj2);
+        JogadorService js2 = new JogadorService(rj2);
+        new PersistenciaService(rc2, rj2).carregar();
+
+        Clube g2 = cs2.buscar(g.getId());
+        Jogador r2 = js2.buscar(r.getId());
+        verificar("1 clube e 2 jogadores carregados", cs2.listar().size() == 1 && js2.listar().size() == 2);
+        verificar("o clube carregado é outro objeto", g2 != g);
+        verificar("o vínculo foi preservado (mesmo objeto)", r2.getClube() == g2 && g2.getElenco().contains(r2));
+        Files.deleteIfExists(arquivo);
 
         // ---------------------------------------------------------------
         System.out.println();
