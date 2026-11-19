@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Function;
 
-public class RepositorioArquivo<T> extends RepositorioMemoria {
+public class RepositorioArquivo<T> extends RepositorioMemoria<T> {
 
     private final DadosSistema dados;
     private final Path arquivo;
@@ -35,7 +35,7 @@ public class RepositorioArquivo<T> extends RepositorioMemoria {
                 saida.writeObject(dados);
             }
         } catch (IOException e) {
-            throw new UncheckedIOException("Não foi possivel gravar os dados", e);
+            throw new UncheckedIOException("Não foi possível gravar os dados", e);
         }
     }
 
@@ -54,9 +54,7 @@ public class RepositorioArquivo<T> extends RepositorioMemoria {
         } catch (IOException e) {
             throw new UncheckedIOException("Não foi possível carregar os dados.", e);
         } catch (ClassNotFoundException e){
-            throw new IllegalStateException("Arquivo de dados incompatível com o sistema");
+            throw new IllegalStateException("Arquivo de dados incompatível com o sistema", e);
         }
-
-
     }
 }

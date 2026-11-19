@@ -10,7 +10,6 @@ import shared.application.Repositorio;
 import shared.infrastructure.DadosSistema;
 import shared.infrastructure.RepositorioArquivo;
 import shared.infrastructure.RepositorioMemoria;
-import shared.application.PersistenciaService;
 
 import java.io.IOException;
 import java.nio.file.Files;
