@@ -15,7 +15,7 @@ class MenuPrincipalGUI extends JFrame implements MenuPrincipal {
     private final PersistenciaService persistenciaService;
 
     MenuPrincipalGUI(TelaClubes telaClubes, TelaJogadores telaJogadores,
-                            PersistenciaService persistenciaService) {
+                     PersistenciaService persistenciaService) {
         this.telaClubes = telaClubes;
         this.telaJogadores = telaJogadores;
         this.persistenciaService = persistenciaService;
@@ -30,12 +30,38 @@ class MenuPrincipalGUI extends JFrame implements MenuPrincipal {
         add(botaoClubes);
 
         JButton botaoJogadores = new JButton("Jogadores");
-        botaoJogadores.addActionListener(e-> telaJogadores.exibir());
+        botaoJogadores.addActionListener(e -> telaJogadores.exibir());
         add(botaoJogadores);
+
+        JButton botaoSalvar = new JButton("Salvar");
+        botaoSalvar.addActionListener(e -> salvar());
+        add(botaoSalvar);
+
+        JButton botaoCarregar = new JButton("Carregar");
+        botaoCarregar.addActionListener(e -> carregar());
+        add(botaoCarregar);
     }
 
     @Override
     public void exibir() {
-        SwingUtilities.invokeLater(()->setVisible(true));
+        SwingUtilities.invokeLater(() -> setVisible(true));
+    }
+
+    private void salvar() {
+        try {
+            persistenciaService.salvar();
+            JOptionPane.showMessageDialog(this, "Dados salvos.");
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void carregar() {
+        try {
+            persistenciaService.carregar();
+            JOptionPane.showMessageDialog(this, "Dados carregados.");
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

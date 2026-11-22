@@ -40,7 +40,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
     private void montarTela() {
         setLayout(new BorderLayout());
 
-        modelo = new TelaJogadoresGUI.ModeloSomenteLeitura(new Object[]{"Id", "Nome", "Idade",
+        modelo = new ModeloSomenteLeitura(new Object[]{"Id", "Nome", "Idade",
                 "Número camisa", "Posição", "Clube"});
         tabela = new JTable(modelo);
         add(new JScrollPane(tabela), BorderLayout.CENTER);
@@ -57,7 +57,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
                     : j.getClube().getNome();
 
             modelo.addRow(new Object[]{j.getId(), j.getNome(), j.getIdade(), j.getNumeroCamisa(),
-            j.getPosicaoPrincipal(), nomeClube});
+                    j.getPosicaoPrincipal(), nomeClube});
         }
     }
 
@@ -77,7 +77,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         painel.add(botaoExcluir);
 
         JButton botaoTransferir = new JButton("Transferir");
-        botaoTransferir.addActionListener(e-> transferir());
+        botaoTransferir.addActionListener(e -> transferir());
         painel.add(botaoTransferir);
 
         JButton botaoFechar = new JButton("Fechar");
@@ -94,7 +94,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
 
             List<Clube> clubes = clubeService.listar();
 
-            if (clubes.isEmpty()){
+            if (clubes.isEmpty()) {
                 throw new IllegalArgumentException("Não existem clubes cadastrados");
             }
 
@@ -116,7 +116,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
 
             Clube destino = (Clube) comboClubes.getSelectedItem();
 
-            if (destino == null){
+            if (destino == null) {
                 return;
             }
 
@@ -165,25 +165,25 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
             if (idadeTexto == null) {
                 return;
             }
-            int idade = Integer.parseInt(idadeTexto);
+            int idade = lerNumero(idadeTexto, "Idade");
 
             String camisaTexto = JOptionPane.showInputDialog(
-              this, "Número da camisa:", jogador.getNumeroCamisa()
+                    this, "Número da camisa:", jogador.getNumeroCamisa()
             );
-            if (camisaTexto == null){
+            if (camisaTexto == null) {
                 return;
             }
-            int numCamisa = Integer.parseInt(camisaTexto);
+            int numCamisa = lerNumero(camisaTexto, "Número da camisa");
 
             PosicaoLinha posicao = null;
 
-            if (jogador instanceof JogadorLinha linha){
+            if (jogador instanceof JogadorLinha linha) {
                 posicao = (PosicaoLinha) JOptionPane.showInputDialog(
-                        this, "Selecine a posição:",
+                        this, "Selecione a posição:",
                         "Posição do jogador", JOptionPane.QUESTION_MESSAGE, null,
                         PosicaoLinha.values(), linha.getPosicao()
                 );
-                if (posicao == null){
+                if (posicao == null) {
                     return;
                 }
             }
@@ -210,23 +210,23 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
             if (idadeTexto == null) {
                 return;
             }
-            int idade = Integer.parseInt(idadeTexto);
+            int idade = lerNumero(idadeTexto, "Idade");
 
             String camisaTexto = JOptionPane.showInputDialog(
                     this, "Número da camisa:");
-            if (camisaTexto == null){
+            if (camisaTexto == null) {
                 return;
             }
-            int numCamisa = Integer.parseInt(camisaTexto);
+            int numCamisa = lerNumero(camisaTexto, "Número da camisa");
 
             String[] tipos = {"Goleiro", "Jogador de linha"};
 
             String tipo = (String) JOptionPane.showInputDialog(
-                    this, "Selecine o tipo do jogador:",
+                    this, "Selecione o tipo do jogador:",
                     "Tipo de jogador", JOptionPane.QUESTION_MESSAGE, null, tipos, tipos[0]
             );
 
-            if (tipo == null){
+            if (tipo == null) {
                 return;
             }
 
@@ -242,7 +242,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
                         PosicaoLinha.values(),
                         PosicaoLinha.ATACANTE
                 );
-                if (posicao == null){
+                if (posicao == null) {
                     return;
                 }
 
@@ -263,17 +263,11 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         return (Integer) modelo.getValueAt(linha, 0);
     }
 
-
-    private static class ModeloSomenteLeitura extends DefaultTableModel {
-
-        ModeloSomenteLeitura(Object[] colunas) {
-            super(colunas, 0);
-        }
-
-        @Override
-        public boolean isCellEditable(int linha, int coluna) {
-            return false;
+    private int lerNumero(String texto, String campo) {
+        try {
+            return Integer.parseInt(texto.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(campo + " deve ser um número.");
         }
     }
-
 }

@@ -131,16 +131,4 @@ class TelaClubesGUI extends JDialog implements TelaClubes {
         atualizarTabela();
         setVisible(true);
     }
-
-    private static class ModeloSomenteLeitura extends DefaultTableModel {
-
-        ModeloSomenteLeitura(Object[] colunas) {
-            super(colunas, 0);
-        }
-
-        @Override
-        public boolean isCellEditable(int linha, int coluna) {
-            return false;
-        }
-    }
 }
