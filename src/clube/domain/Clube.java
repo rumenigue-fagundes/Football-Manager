@@ -93,4 +93,9 @@ public class Clube implements Serializable {
     public List<Jogador> getElenco() {
         return Collections.unmodifiableList(elenco);
     }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }
