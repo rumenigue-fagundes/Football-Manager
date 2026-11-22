@@ -5,21 +5,33 @@ import presentation.produtos.TelaClubes;
 import presentation.produtos.TelaJogadores;
 import shared.application.PersistenciaService;
 
-public class MenuPrincipalGUI implements MenuPrincipal {
+import javax.swing.*;
+import java.awt.*;
+
+class MenuPrincipalGUI extends JFrame implements MenuPrincipal {
 
     private final TelaClubes telaClubes;
     private final TelaJogadores telaJogadores;
     private final PersistenciaService persistenciaService;
 
-    public MenuPrincipalGUI(TelaClubes telaClubes, TelaJogadores telaJogadores,
+    MenuPrincipalGUI(TelaClubes telaClubes, TelaJogadores telaJogadores,
                             PersistenciaService persistenciaService) {
         this.telaClubes = telaClubes;
         this.telaJogadores = telaJogadores;
         this.persistenciaService = persistenciaService;
+        setTitle("Sistema de futebol");
+        setSize(300, 250);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(4, 1, 10, 10));
+
+        JButton botaoClubes = new JButton("Clubes");
+        botaoClubes.addActionListener(e -> telaClubes.exibir());
+        add(botaoClubes);
     }
 
     @Override
     public void exibir() {
-
+        SwingUtilities.invokeLater(()->setVisible(true));
     }
 }
