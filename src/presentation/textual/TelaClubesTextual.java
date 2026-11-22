@@ -1,11 +1,14 @@
 package presentation.textual;
 
 import clube.application.ClubeService;
+import clube.domain.Clube;
 import presentation.produtos.TelaClubes;
 
 import java.util.Scanner;
 
-/** Tela de clubes no console. */
+/**
+ * Tela de clubes no console.
+ */
 class TelaClubesTextual implements TelaClubes {
 
     private final ClubeService clubeService;
@@ -18,7 +21,83 @@ class TelaClubesTextual implements TelaClubes {
 
     @Override
     public void exibir() {
-        // TODO: listar, criar, editar e excluir clubes
-        System.out.println("(tela de clubes em construção)");
+        while (true) {
+            System.out.println();
+            System.out.println("=== Clubes ===");
+            System.out.println("1. Listar clubes");
+            System.out.println("2. Criar clube");
+            System.out.println("3. Editar clube");
+            System.out.println("4. Excluir Clube");
+            System.out.println("0. Voltar");
+            String op = ler("Opção");
+
+            try {
+                switch (op) {
+                    case "1":
+                        listar();
+                        break;
+                    case "2":
+                        criar();
+                        break;
+                    case "3":
+                        editar();
+                        break;
+                    case "4":
+                        excluir();
+                        break;
+                    case "0":
+                        return;
+                    default:
+                        System.out.println("Opção inválida.");
+                }
+            } catch (RuntimeException e) {
+                System.out.println("ERRO: " + e.getMessage());
+            }
+        }
+    }
+
+    private void listar() {
+        if (clubeService.listar().isEmpty()) {
+            System.out.println("Nenhum clube cadastrado.");
+            return;
+        }
+        for (Clube c : clubeService.listar()) {
+            System.out.println(c.getId() + " - " + c.getNome() + " (" + c.getCidade() + ") - "
+                    + c.getElenco().size() + " jogadores");
+        }
+    }
+
+    private void criar() {
+        String nome = ler("Nome");
+        String cidade = ler("Cidade");
+        clubeService.criar(nome, cidade);
+        System.out.println("Clube criado.");
+    }
+
+    private void editar() {
+        int id = lerInteiro("Id");
+        String nome = ler("Nome");
+        String cidade = ler("Cidade");
+        clubeService.editar(id, nome, cidade);
+        System.out.println("Clube editado.");
+    }
+
+    private void excluir() {
+        int id = lerInteiro("Id");
+        clubeService.excluir(id);
+        System.out.println("Clube excluído.");
+    }
+
+    private String ler(String rotulo) {
+        System.out.print(rotulo + ": ");
+        return entrada.nextLine().trim();
+    }
+
+    private int lerInteiro(String rotulo) {
+        try {
+            return Integer.parseInt(ler(rotulo));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Digite um número válido.");
+        }
     }
 }
