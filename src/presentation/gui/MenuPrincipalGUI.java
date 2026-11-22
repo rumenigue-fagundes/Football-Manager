@@ -28,6 +28,10 @@ class MenuPrincipalGUI extends JFrame implements MenuPrincipal {
         JButton botaoClubes = new JButton("Clubes");
         botaoClubes.addActionListener(e -> telaClubes.exibir());
         add(botaoClubes);
+
+        JButton botaoJogadores = new JButton("Jogadores");
+        botaoJogadores.addActionListener(e-> telaJogadores.exibir());
+        add(botaoJogadores);
     }
 
     @Override
