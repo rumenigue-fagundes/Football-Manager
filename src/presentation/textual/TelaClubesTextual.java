@@ -19,6 +19,7 @@ class TelaClubesTextual implements TelaClubes {
         this.entrada = entrada;
     }
 
+    /** Laço do submenu: repete até o usuário escolher 0 (Voltar); erros do Domain aparecem como ERRO. */
     @Override
     public void exibir() {
         while (true) {
@@ -56,6 +57,7 @@ class TelaClubesTextual implements TelaClubes {
         }
     }
 
+    /** Mostra um clube por linha, com o tamanho do elenco. */
     private void listar() {
         if (clubeService.listar().isEmpty()) {
             System.out.println("Nenhum clube cadastrado.");
@@ -88,11 +90,13 @@ class TelaClubesTextual implements TelaClubes {
         System.out.println("Clube excluído.");
     }
 
+    /** Mostra o rótulo e lê uma linha digitada. */
     private String ler(String rotulo) {
         System.out.print(rotulo + ": ");
         return entrada.nextLine().trim();
     }
 
+    /** Converte a linha lida em número; texto inválido vira uma mensagem clara. */
     private int lerInteiro(String rotulo) {
         try {
             return Integer.parseInt(ler(rotulo));

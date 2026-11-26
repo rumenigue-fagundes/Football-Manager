@@ -8,6 +8,10 @@ import presentation.produtos.TelaClubes;
 import presentation.produtos.TelaJogadores;
 import shared.application.PersistenciaService;
 
+/**
+ * Abstract Factory concreta da interface gráfica (Swing): cria o menu e as telas em janelas.
+ * É a única classe pública deste pacote; as telas ficam visíveis só aqui dentro.
+ */
 public class GUIFactory implements ApresentacaoFactory {
     @Override
     public TelaClubes criarTelaClubes(ClubeService clubeService) {

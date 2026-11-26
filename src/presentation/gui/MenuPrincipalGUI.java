@@ -8,6 +8,10 @@ import shared.application.PersistenciaService;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Janela principal (JFrame) com os botões Clubes, Jogadores, Salvar e Carregar.
+ * Ao fechá-la, o programa termina.
+ */
 class MenuPrincipalGUI extends JFrame implements MenuPrincipal {
 
     private final TelaClubes telaClubes;
@@ -42,11 +46,13 @@ class MenuPrincipalGUI extends JFrame implements MenuPrincipal {
         add(botaoCarregar);
     }
 
+    /** Só mostra a janela (na thread do Swing); quem mantém o programa vivo é o laço de eventos. */
     @Override
     public void exibir() {
         SwingUtilities.invokeLater(() -> setVisible(true));
     }
 
+    /** Salva os dados e mostra uma mensagem de sucesso ou o erro ocorrido. */
     private void salvar() {
         try {
             persistenciaService.salvar();
@@ -56,6 +62,7 @@ class MenuPrincipalGUI extends JFrame implements MenuPrincipal {
         }
     }
 
+    /** Carrega os dados do arquivo e mostra uma mensagem de sucesso ou o erro ocorrido. */
     private void carregar() {
         try {
             persistenciaService.carregar();

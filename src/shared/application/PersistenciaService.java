@@ -1,5 +1,9 @@
 package shared.application;
 
+/**
+ * Casos de uso Salvar e Carregar: aciona todos os repositórios do sistema.
+ * A Presentation só conhece esta classe, nunca os detalhes de arquivo.
+ */
 public class PersistenciaService {
     private final Repositorio<?>[] repositorios;
 

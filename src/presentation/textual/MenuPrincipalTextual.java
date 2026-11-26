@@ -23,6 +23,7 @@ class MenuPrincipalTextual implements MenuPrincipal {
         this.entrada = entrada;
     }
 
+    /** Laço do menu: repete até o usuário escolher 0 (Sair); erros são mostrados como ERRO. */
     @Override
     public void exibir() {
         while (true) {

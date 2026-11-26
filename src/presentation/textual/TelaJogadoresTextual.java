@@ -25,6 +25,7 @@ class TelaJogadoresTextual implements TelaJogadores {
         this.entrada = entrada;
     }
 
+    /** Laço do submenu: repete até o usuário escolher 0 (Voltar); erros do Domain aparecem como ERRO. */
     @Override
     public void exibir() {
         while (true) {
@@ -66,6 +67,7 @@ class TelaJogadoresTextual implements TelaJogadores {
         }
     }
 
+    /** Mostra um jogador por linha, com o nome do clube (ou "Sem clube"). */
     private void listar() {
         if (jogadorService.listar().isEmpty()) {
             System.out.println("Nenhum jogador cadastrado.");
@@ -78,6 +80,7 @@ class TelaJogadoresTextual implements TelaJogadores {
         }
     }
 
+    /** Pergunta o tipo (L ou G) antes de pedir os outros dados; só jogador de linha tem posição. */
     private void criar() {
         String tipo = ler("Jogador de linha ou goleiro? [L/G]").toUpperCase();
         if (!tipo.equals("L") && !tipo.equals("G")) {
@@ -97,6 +100,7 @@ class TelaJogadoresTextual implements TelaJogadores {
         System.out.println("Jogador criado.");
     }
 
+    /** A posição só é pedida quando o jogador é de linha; goleiro não tem posição para editar. */
     private void editar() {
         int id = lerInteiro("Id");
         Jogador jogador = jogadorService.buscar(id);
@@ -119,6 +123,7 @@ class TelaJogadoresTextual implements TelaJogadores {
         System.out.println("Jogador excluído.");
     }
 
+    /** Move o jogador para outro clube; também serve para dar o primeiro clube a quem não tem. */
     private void transferir() {
         int jogadorId = lerInteiro("Id do jogador escolhido");
         int clubeDestinoId = lerInteiro("Id do clube de destino");
@@ -126,11 +131,13 @@ class TelaJogadoresTextual implements TelaJogadores {
         System.out.println("Jogador transferido.");
     }
 
+    /** Mostra o rótulo e lê uma linha digitada. */
     private String ler(String rotulo) {
         System.out.print(rotulo + ": ");
         return entrada.nextLine().trim();
     }
 
+    /** Converte a linha lida em número; texto inválido vira uma mensagem clara. */
     private int lerInteiro(String rotulo) {
         try {
             return Integer.parseInt(ler(rotulo));
@@ -139,6 +146,7 @@ class TelaJogadoresTextual implements TelaJogadores {
         }
     }
 
+    /** Converte o texto digitado em PosicaoLinha; valor desconhecido vira uma mensagem clara. */
     private PosicaoLinha lerPosicao() {
         String texto = ler("Posição (ZAGUEIRO, LATERAL, MEIO_CAMPO, ATACANTE)").toUpperCase();
         try {

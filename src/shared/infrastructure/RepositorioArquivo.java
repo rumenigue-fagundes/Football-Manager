@@ -9,6 +9,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Repositório em memória que também grava e carrega os dados de um arquivo, por serialização.
+ * Todos os repositórios do mesmo arquivo compartilham o mesmo DadosSistema; por isso clubes e
+ * jogadores são gravados juntos e os vínculos entre eles sobrevivem ao carregamento.
+ */
 public class RepositorioArquivo<T> extends RepositorioMemoria<T> {
 
     private final DadosSistema dados;
@@ -23,6 +28,7 @@ public class RepositorioArquivo<T> extends RepositorioMemoria<T> {
         this.arquivo = arquivo;
     }
 
+    /** Cria a pasta se for preciso e grava o DadosSistema inteiro (sobrescreve o arquivo). */
     @Override
     public void gravar() {
         try {
@@ -39,6 +45,10 @@ public class RepositorioArquivo<T> extends RepositorioMemoria<T> {
         }
     }
 
+    /**
+     * Sem arquivo (primeira execução), mantém os dados atuais. Com arquivo, lê tudo e copia o
+     * conteúdo para as MESMAS listas, porque os repositórios continuam apontando para elas.
+     */
     @Override
     public void carregar() {
         if (Files.notExists(arquivo)) {

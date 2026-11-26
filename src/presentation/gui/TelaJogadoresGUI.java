@@ -14,6 +14,10 @@ import java.awt.*;
 
 import java.util.List;
 
+/**
+ * Janela modal (JDialog) de jogadores: tabela com os jogadores e botões Novo, Editar, Excluir,
+ * Transferir e Fechar. Não tem regra de negócio: só lê dados do usuário e chama os serviços.
+ */
 class TelaJogadoresGUI extends JDialog implements TelaJogadores {
 
     private final JogadorService jogadorService;
@@ -37,6 +41,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         setVisible(true);
     }
 
+    /** Monta a janela: tabela no centro e botões embaixo. */
     private void montarTela() {
         setLayout(new BorderLayout());
 
@@ -48,6 +53,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         add(criarPainelBotoes(), BorderLayout.SOUTH);
     }
 
+    /** Recarrega a tabela a partir do serviço (ao abrir a janela e após cada alteração). */
     private void atualizarTabela() {
         modelo.setRowCount(0);
 
@@ -87,6 +93,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         return painel;
     }
 
+    /** Escolhe o clube de destino num combo; o ClubeService decide se aceita (camisa repetida, por exemplo). */
     private void transferir() {
         try {
             int id = idSelecionado();
@@ -134,6 +141,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         }
     }
 
+    /** Exclui o jogador selecionado depois de pedir confirmação. */
     private void excluir() {
         try {
             int id = idSelecionado();
@@ -149,6 +157,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         }
     }
 
+    /** Edita o jogador selecionado; a posição só é pedida para jogador de linha. */
     private void editar() {
         try {
             int id = idSelecionado();
@@ -196,6 +205,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         }
     }
 
+    /** Pede os dados e o tipo (goleiro ou jogador de linha); erros do Domain aparecem numa caixa de erro. */
     private void novo() {
         try {
 
@@ -255,6 +265,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         }
     }
 
+    /** Id da linha selecionada (coluna 0); sem seleção, lança a exceção cuja mensagem é mostrada ao usuário. */
     private int idSelecionado() {
         int linha = tabela.getSelectedRow();
         if (linha == -1) {
@@ -263,6 +274,7 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         return (Integer) modelo.getValueAt(linha, 0);
     }
 
+    /** Converte o texto em número; texto inválido vira uma mensagem clara em vez do erro do Java. */
     private int lerNumero(String texto, String campo) {
         try {
             return Integer.parseInt(texto.trim());

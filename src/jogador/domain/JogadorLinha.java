@@ -1,5 +1,6 @@
 package jogador.domain;
 
+/** Jogador de linha: especialização de Jogador que acrescenta a posição em campo (PosicaoLinha). */
 public class JogadorLinha extends Jogador {
     private PosicaoLinha posicao;
 
@@ -20,6 +21,7 @@ public class JogadorLinha extends Jogador {
         return posicao;
     }
 
+    /** Altera a posição; recusa valor nulo. */
     public void setPosicao(PosicaoLinha posicao) {
         if (posicao == null) {
             throw new IllegalArgumentException("Posição inválida.");

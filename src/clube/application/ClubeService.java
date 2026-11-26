@@ -7,6 +7,10 @@ import shared.application.Repositorio;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Casos de uso de clubes (Application): criar, buscar, editar, excluir e gerenciar o elenco.
+ * Coordena os repositórios; as regras de negócio continuam no Domain (Clube).
+ */
 public class ClubeService {
     private final Repositorio<Clube> repositorio;
     private final Repositorio<Jogador> repositorioJogadores;
@@ -16,6 +20,7 @@ public class ClubeService {
         this.repositorioJogadores = repositorioJogadores;
     }
 
+    /** Gera o id automaticamente e salva o novo clube. */
     public Clube criar(String nome, String cidade) {
         Clube clube = new Clube(proximoId(), nome, cidade);
         repositorio.salvar(clube);
@@ -32,6 +37,7 @@ public class ClubeService {
         return repositorio.listarTodos();
     }
 
+    /** Altera nome e cidade (validados pelo Clube) e salva. */
     public void editar(int id, String nome, String cidade) {
         Clube clube = buscar(id);
 
@@ -41,6 +47,10 @@ public class ClubeService {
         repositorio.salvar(clube);
     }
 
+    /**
+     * Libera os jogadores do elenco (ficam sem clube) antes de remover o clube.
+     * Percorre uma cópia da lista porque removerJogador altera o elenco original.
+     */
     public void excluir(int id) {
         Clube clube = buscar(id);
 
@@ -51,11 +61,13 @@ public class ClubeService {
         repositorio.remover(id);
     }
 
+    /** Maior id existente + 1; continua correto depois de carregar dados do arquivo. */
     private int proximoId() {
         return repositorio.listarTodos().stream().mapToInt(
                 Clube::getId).max().orElse(0) + 1;
     }
 
+    /** Busca clube e jogador pelos ids; a regra do vínculo fica por conta do Clube. */
     public void adicionarJogador(int clubeId, int jogadorId) {
         Clube clube = buscar(clubeId);
         Jogador jogador = repositorioJogadores.buscarPorId(jogadorId)
@@ -82,6 +94,11 @@ public class ClubeService {
         return clube.getElenco();
     }
 
+    /**
+     * Move o jogador para outro clube (ou dá o primeiro clube a quem não tem).
+     * Se o destino recusar, devolve o jogador à origem
+     * para ele não ficar sem clube, e repassa o erro.
+     */
     public void transferir(int jogadorId, int clubeDestinoId){
         Jogador jogador = repositorioJogadores.buscarPorId(jogadorId)
                 .orElseThrow(() -> new IllegalArgumentException(

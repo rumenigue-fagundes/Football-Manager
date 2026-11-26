@@ -9,6 +9,10 @@ import shared.application.Repositorio;
 
 import java.util.List;
 
+/**
+ * Casos de uso de jogadores (Application): criar goleiros e jogadores de linha, buscar, editar e excluir.
+ * Gera os ids e coordena o repositório; as validações ficam no Domain.
+ */
 public class JogadorService {
 
     private final Repositorio<Jogador> repositorio;
@@ -17,6 +21,7 @@ public class JogadorService {
         this.repositorio = repositorio;
     }
 
+    /** Cria um jogador de linha com id gerado automaticamente. */
     public JogadorLinha criarLinha(String nome, int idade,
                                    int numeroCamisa, PosicaoLinha posicao) {
         JogadorLinha jogador = new JogadorLinha(proximoId(), nome, idade, numeroCamisa, posicao);
@@ -40,6 +45,10 @@ public class JogadorService {
         return repositorio.listarTodos();
     }
 
+    /**
+     * Atualiza os dados do jogador. A posição só se aplica a jogador de linha;
+     * para goleiro o valor é ignorado.
+     */
     public void editar(int id, String nome, int idade, int numeroCamisa, PosicaoLinha posicao){
         Jogador jogador = buscar(id);
 
@@ -54,6 +63,7 @@ public class JogadorService {
         repositorio.salvar(jogador);
     }
 
+    /** Desvincula o jogador do clube antes de removê-lo; senão o clube continuaria com ele no elenco. */
     public void excluir(int id) {
         Jogador jogador = buscar(id);
 
@@ -66,6 +76,7 @@ public class JogadorService {
         repositorio.remover(id);
     }
 
+    /** Maior id existente + 1. */
     private int proximoId() {
         return repositorio.listarTodos().stream().mapToInt(
                 Jogador::getId).max().orElse(0) + 1;

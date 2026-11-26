@@ -4,8 +4,14 @@ import clube.domain.Clube;
 
 import java.io.Serializable;
 
+/**
+ * Jogador de futebol (classe abstrata): guarda os dados comuns a todos os jogadores.
+ * Cada tipo de jogador informa a sua posição em getPosicaoPrincipal().
+ * É Serializable para poder ser gravado em arquivo.
+ */
 public abstract class Jogador implements Serializable {
 
+    // Identifica a versão da classe no arquivo de dados (serialização).
     private static final long serialVersionUID = 1L;
     private int id;
     private String nome;
@@ -13,6 +19,7 @@ public abstract class Jogador implements Serializable {
     private int numeroCamisa;
     private Clube clube;
 
+    /** Cria o jogador validando nome, idade e número da camisa. */
     public Jogador(int id, String nome, int idade, int numeroCamisa) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome inválido.");
@@ -29,6 +36,7 @@ public abstract class Jogador implements Serializable {
         this.numeroCamisa = numeroCamisa;
     }
 
+    /** Cada subclasse devolve a sua posição (polimorfismo). */
     public abstract String getPosicaoPrincipal();
 
     public Clube getClube() {
@@ -69,6 +77,7 @@ public abstract class Jogador implements Serializable {
         return numeroCamisa;
     }
 
+    /** Altera a camisa; se o jogador tem clube, recusa número já usado por outro jogador do elenco. */
     public void setNumeroCamisa(int numeroCamisa) {
         if (numeroCamisa < 0) {
             throw new IllegalArgumentException("Número de camisa inválido.");

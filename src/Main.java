@@ -19,17 +19,23 @@ import java.nio.file.Paths;
 public class Main {
 
     public static void main(String[] args) {
+        // Arquivo onde os dados são gravados (a pasta "dados" é criada ao salvar).
         Path arquivo = Paths.get("dados", "futebol.dat");
+        // Os dois repositórios compartilham os mesmos dados, para clubes e jogadores serem gravados juntos.
         DadosSistema dados = new DadosSistema();
         Repositorio<Clube> repositorioClubes =
                 new RepositorioArquivo<>(dados, DadosSistema::getClubes, Clube::getId, arquivo);
         Repositorio<Jogador> repositorioJogadores =
                 new RepositorioArquivo<>(dados, DadosSistema::getJogadores, Jogador::getId, arquivo);
 
+        // Serviços da Application: recebem apenas a interface Repositorio.
         ClubeService clubeService = new ClubeService(repositorioClubes, repositorioJogadores);
         JogadorService jogadorService = new JogadorService(repositorioJogadores);
         PersistenciaService persistenciaService = new PersistenciaService(repositorioClubes, repositorioJogadores);
 
+        //persistenciaService.carregar(); // se já houver arquivo, começa com os dados salvos
+
+        // A fábrica definida em ConfiguracaoSistema cria as telas (textuais ou gráficas); o Main não sabe qual.
         ApresentacaoFactory factory = ConfiguracaoSistema.obterFactory();
         TelaClubes telaClubes = factory.criarTelaClubes(clubeService);
         TelaJogadores telaJogadores = factory.criarTelaJogadores(jogadorService, clubeService);
