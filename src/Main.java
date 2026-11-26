@@ -30,8 +30,6 @@ public class Main {
         JogadorService jogadorService = new JogadorService(repositorioJogadores);
         PersistenciaService persistenciaService = new PersistenciaService(repositorioClubes, repositorioJogadores);
 
-        persistenciaService.carregar(); // se já houver arquivo, começa com os dados salvos
-
         ApresentacaoFactory factory = ConfiguracaoSistema.obterFactory();
         TelaClubes telaClubes = factory.criarTelaClubes(clubeService);
         TelaJogadores telaJogadores = factory.criarTelaJogadores(jogadorService, clubeService);
