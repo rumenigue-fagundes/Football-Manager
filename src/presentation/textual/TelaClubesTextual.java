@@ -2,8 +2,10 @@ package presentation.textual;
 
 import clube.application.ClubeService;
 import clube.domain.Clube;
+import jogador.domain.Jogador;
 import presentation.produtos.TelaClubes;
 
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -29,6 +31,7 @@ class TelaClubesTextual implements TelaClubes {
             System.out.println("2. Criar clube");
             System.out.println("3. Editar clube");
             System.out.println("4. Excluir Clube");
+            System.out.println("5. Excluir Clube");
             System.out.println("0. Voltar");
             String op = ler("Opção");
 
@@ -46,6 +49,8 @@ class TelaClubesTextual implements TelaClubes {
                     case "4":
                         excluir();
                         break;
+                    case "5":
+                        verElenco();
                     case "0":
                         return;
                     default:
@@ -88,6 +93,18 @@ class TelaClubesTextual implements TelaClubes {
         int id = lerInteiro("Id");
         clubeService.excluir(id);
         System.out.println("Clube excluído.");
+    }
+
+    private void verElenco() {
+        int id = lerInteiro("Id do clube");
+        List<Jogador> elenco = clubeService.listarElenco(id);
+        if (elenco.isEmpty()) {
+            System.out.println("O clube não tem jogadores.");
+            return;
+        }
+        for (Jogador j : elenco) {
+            System.out.println(j.getNumeroCamisa() + " - " + j.getNome() + " (" + j.getPosicaoPrincipal() + ")");
+        }
     }
 
     /** Mostra o rótulo e lê uma linha digitada. */

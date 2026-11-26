@@ -9,6 +9,7 @@ import jogador.domain.PosicaoLinha;
 import presentation.produtos.TelaJogadores;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
@@ -48,6 +49,13 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
         modelo = new ModeloSomenteLeitura(new Object[]{"Id", "Nome", "Idade",
                 "Número camisa", "Posição", "Clube"});
         tabela = new JTable(modelo);
+
+        DefaultTableCellRenderer centralizado = new DefaultTableCellRenderer();
+        centralizado.setHorizontalAlignment(SwingConstants.CENTER);
+        tabela.getColumnModel().getColumn(0).setCellRenderer(centralizado);
+        tabela.getColumnModel().getColumn(2).setCellRenderer(centralizado);
+        tabela.getColumnModel().getColumn(3).setCellRenderer(centralizado);
+
         add(new JScrollPane(tabela), BorderLayout.CENTER);
 
         add(criarPainelBotoes(), BorderLayout.SOUTH);
@@ -158,110 +166,103 @@ class TelaJogadoresGUI extends JDialog implements TelaJogadores {
     }
 
     /** Edita o jogador selecionado; a posição só é pedida para jogador de linha. */
-    private void editar() {
-        try {
-            int id = idSelecionado();
-            Jogador jogador = jogadorService.buscar(id);
+    /** Formulário único; se o serviço recusar os dados, ele reaparece com os campos como o usuário deixou. */
+    private void novo() {
+        JTextField campoNome = new JTextField(20);
+        JTextField campoIdade = new JTextField(20);
+        JTextField campoCamisa = new JTextField(20);
+        JComboBox<String> comboTipo = new JComboBox<>(new String[]{"Jogador de linha", "Goleiro"});
+        JComboBox<PosicaoLinha> comboPosicao = new JComboBox<>(PosicaoLinha.values());
+        // Goleiro não tem posição: o combo só fica habilitado para jogador de linha.
+        comboTipo.addActionListener(e -> comboPosicao.setEnabled(comboTipo.getSelectedIndex() == 0));
 
-            String nome = JOptionPane.showInputDialog(
-                    this, "Nome do jogador:", jogador.getNome());
-            if (nome == null) {
-                return;
+        JPanel formulario = new JPanel(new GridLayout(0, 2, 5, 5));
+        formulario.add(new JLabel("Nome:"));
+        formulario.add(campoNome);
+        formulario.add(new JLabel("Idade:"));
+        formulario.add(campoIdade);
+        formulario.add(new JLabel("Número da camisa:"));
+        formulario.add(campoCamisa);
+        formulario.add(new JLabel("Tipo:"));
+        formulario.add(comboTipo);
+        formulario.add(new JLabel("Posição:"));
+        formulario.add(comboPosicao);
+
+        while (true) {
+            int resposta = JOptionPane.showConfirmDialog(this, formulario, "Novo jogador",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (resposta != JOptionPane.OK_OPTION) {
+                return;                                   // o usuário cancelou
             }
-
-            String idadeTexto = JOptionPane.showInputDialog(
-                    this, "Idade:", jogador.getIdade());
-            if (idadeTexto == null) {
-                return;
-            }
-            int idade = lerNumero(idadeTexto, "Idade");
-
-            String camisaTexto = JOptionPane.showInputDialog(
-                    this, "Número da camisa:", jogador.getNumeroCamisa()
-            );
-            if (camisaTexto == null) {
-                return;
-            }
-            int numCamisa = lerNumero(camisaTexto, "Número da camisa");
-
-            PosicaoLinha posicao = null;
-
-            if (jogador instanceof JogadorLinha linha) {
-                posicao = (PosicaoLinha) JOptionPane.showInputDialog(
-                        this, "Selecione a posição:",
-                        "Posição do jogador", JOptionPane.QUESTION_MESSAGE, null,
-                        PosicaoLinha.values(), linha.getPosicao()
-                );
-                if (posicao == null) {
-                    return;
+            try {
+                String nome = campoNome.getText().trim();
+                int idade = lerNumero(campoIdade.getText(), "Idade");
+                int numCamisa = lerNumero(campoCamisa.getText(), "Número da camisa");
+                if (comboTipo.getSelectedIndex() == 1) {
+                    jogadorService.criarGoleiro(nome, idade, numCamisa);
+                } else {
+                    jogadorService.criarLinha(nome, idade, numCamisa,
+                            (PosicaoLinha) comboPosicao.getSelectedItem());
                 }
+                atualizarTabela();
+                return;                                   // deu certo
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                // o laço repete: o formulário volta com os campos como o usuário deixou
             }
-
-            jogadorService.editar(id, nome.trim(), idade, numCamisa, posicao);
-            atualizarTabela();
-
-        } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    /** Pede os dados e o tipo (goleiro ou jogador de linha); erros do Domain aparecem numa caixa de erro. */
-    private void novo() {
+    /** Formulário com os valores atuais; a posição só aparece para jogador de linha. Erros reabrem o formulário. */
+    private void editar() {
+        Jogador jogador;
         try {
-
-            String nome = JOptionPane.showInputDialog(
-                    this, "Nome do jogador:");
-            if (nome == null) {
-                return;
-            }
-
-            String idadeTexto = JOptionPane.showInputDialog(
-                    this, "Idade:");
-            if (idadeTexto == null) {
-                return;
-            }
-            int idade = lerNumero(idadeTexto, "Idade");
-
-            String camisaTexto = JOptionPane.showInputDialog(
-                    this, "Número da camisa:");
-            if (camisaTexto == null) {
-                return;
-            }
-            int numCamisa = lerNumero(camisaTexto, "Número da camisa");
-
-            String[] tipos = {"Goleiro", "Jogador de linha"};
-
-            String tipo = (String) JOptionPane.showInputDialog(
-                    this, "Selecione o tipo do jogador:",
-                    "Tipo de jogador", JOptionPane.QUESTION_MESSAGE, null, tipos, tipos[0]
-            );
-
-            if (tipo == null) {
-                return;
-            }
-
-            if (tipo.equals("Goleiro")) {
-                jogadorService.criarGoleiro(nome.trim(), idade, numCamisa);
-            } else {
-                PosicaoLinha posicao = (PosicaoLinha) JOptionPane.showInputDialog(
-                        this,
-                        "Selecione a posição:",
-                        "Posição do jogador",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        PosicaoLinha.values(),
-                        PosicaoLinha.ATACANTE
-                );
-                if (posicao == null) {
-                    return;
-                }
-
-                jogadorService.criarLinha(nome.trim(), idade, numCamisa, posicao);
-            }
-
-            atualizarTabela();
+            jogador = jogadorService.buscar(idSelecionado());
         } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JTextField campoNome = new JTextField(jogador.getNome(), 20);
+        JTextField campoIdade = new JTextField(String.valueOf(jogador.getIdade()), 20);
+        JTextField campoCamisa = new JTextField(String.valueOf(jogador.getNumeroCamisa()), 20);
+
+        JPanel formulario = new JPanel(new GridLayout(0, 2, 5, 5));
+        formulario.add(new JLabel("Nome:"));
+        formulario.add(campoNome);
+        formulario.add(new JLabel("Idade:"));
+        formulario.add(campoIdade);
+        formulario.add(new JLabel("Número da camisa:"));
+        formulario.add(campoCamisa);
+
+        JComboBox<PosicaoLinha> comboPosicao = null;     // continua null para goleiro
+        if (jogador instanceof JogadorLinha linha) {
+            comboPosicao = new JComboBox<>(PosicaoLinha.values());
+            comboPosicao.setSelectedItem(linha.getPosicao());
+            formulario.add(new JLabel("Posição:"));
+            formulario.add(comboPosicao);
+        }
+
+        while (true) {
+            int resposta = JOptionPane.showConfirmDialog(this, formulario, "Editar jogador",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (resposta != JOptionPane.OK_OPTION) {
+                return;                                   // o usuário cancelou
+            }
+            try {
+                String nome = campoNome.getText().trim();
+                int idade = lerNumero(campoIdade.getText(), "Idade");
+                int numCamisa = lerNumero(campoCamisa.getText(), "Número da camisa");
+                PosicaoLinha posicao = comboPosicao == null
+                        ? null
+                        : (PosicaoLinha) comboPosicao.getSelectedItem();
+                jogadorService.editar(jogador.getId(), nome, idade, numCamisa, posicao);
+                atualizarTabela();
+                return;                                   // deu certo
+            } catch (RuntimeException ex) {
+                atualizarTabela();                        // a tela mostra o que realmente foi alterado
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

@@ -2,11 +2,14 @@ package presentation.gui;
 
 import clube.application.ClubeService;
 import clube.domain.Clube;
+import jogador.domain.Jogador;
 import presentation.produtos.TelaClubes;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 /**
  * Janela modal (JDialog) de clubes: tabela com os clubes e botões Novo, Editar, Excluir e Fechar.
@@ -33,6 +36,12 @@ class TelaClubesGUI extends JDialog implements TelaClubes {
 
         modelo = new ModeloSomenteLeitura(new Object[]{"Id", "Nome", "Cidade", "Jogadores"});
         tabela = new JTable(modelo);
+
+        DefaultTableCellRenderer centralizado = new DefaultTableCellRenderer();
+        centralizado.setHorizontalAlignment(SwingConstants.CENTER);
+        tabela.getColumnModel().getColumn(0).setCellRenderer(centralizado);
+        tabela.getColumnModel().getColumn(3).setCellRenderer(centralizado);
+
         add(new JScrollPane(tabela), BorderLayout.CENTER);
 
         add(criarPainelBotoes(), BorderLayout.SOUTH);
@@ -65,7 +74,34 @@ class TelaClubesGUI extends JDialog implements TelaClubes {
         botaoFechar.addActionListener(e -> dispose());
         painel.add(botaoFechar);
 
+        JButton botaoElenco = new JButton("Ver elenco");
+        botaoElenco.addActionListener(e -> verElenco());
+        painel.add(botaoElenco);
+
         return painel;
+    }
+
+    /** Mostra os jogadores do clube selecionado (camisa, nome e posição). */
+    private void verElenco() {
+        try {
+            int id = idSelecionado();
+            Clube clube = clubeService.buscar(id);
+            List<Jogador> elenco = clubeService.listarElenco(id);
+            if (elenco.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "O clube não tem jogadores.",
+                        clube.getNome(), JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            StringBuilder texto = new StringBuilder();
+            for (Jogador j : elenco) {
+                texto.append(j.getNumeroCamisa()).append(" - ").append(j.getNome())
+                        .append(" (").append(j.getPosicaoPrincipal()).append(")\n");
+            }
+            JOptionPane.showMessageDialog(this, texto.toString(),
+                    "Elenco - " + clube.getNome(), JOptionPane.INFORMATION_MESSAGE);
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /** Exclui o clube selecionado depois de pedir confirmação. */
@@ -85,44 +121,65 @@ class TelaClubesGUI extends JDialog implements TelaClubes {
     }
 
     /** Edita o clube selecionado; as caixas já vêm preenchidas com os valores atuais. */
+    /** Formulário com os valores atuais do clube; se o serviço recusar os dados, o formulário reaparece. */
     private void editar() {
+        Clube clube;
         try {
-            int id = idSelecionado();
-
-            int linha = tabela.getSelectedRow();
-            String nomeAtual = String.valueOf(modelo.getValueAt(linha, 1));
-            String nome = JOptionPane.showInputDialog(this, "Nome do clube:", nomeAtual);
-            if (nome == null) {
-                return;
-            }
-
-            String cidadeAtual = String.valueOf(modelo.getValueAt(linha, 2));
-            String cidade = JOptionPane.showInputDialog(this, "Cidade:", cidadeAtual);
-            if (cidade == null) {
-                return;
-            }
-            clubeService.editar(id, nome.trim(), cidade.trim());
-            atualizarTabela();
+            clube = clubeService.buscar(idSelecionado());
         } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JTextField campoNome = new JTextField(clube.getNome(), 20);
+        JTextField campoCidade = new JTextField(clube.getCidade(), 20);
+        JPanel formulario = new JPanel(new GridLayout(0, 2, 5, 5));
+        formulario.add(new JLabel("Nome:"));
+        formulario.add(campoNome);
+        formulario.add(new JLabel("Cidade:"));
+        formulario.add(campoCidade);
+
+        while (true) {
+            int resposta = JOptionPane.showConfirmDialog(this, formulario, "Editar clube",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (resposta != JOptionPane.OK_OPTION) {
+                return;                                   // o usuário cancelou
+            }
+            try {
+                clubeService.editar(clube.getId(), campoNome.getText().trim(), campoCidade.getText().trim());
+                atualizarTabela();
+                return;                                   // deu certo
+            } catch (RuntimeException ex) {
+                atualizarTabela();                        // a tela mostra o que realmente foi alterado
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
     /** Pede nome e cidade; erros do Domain aparecem numa caixa de erro. */
     private void novo() {
-        try {
-            String nome = JOptionPane.showInputDialog(this, "Nome do clube:");
-            if (nome == null) {
-                return;
+        JTextField campoNome = new JTextField(20);
+        JTextField campoCidade = new JTextField(20);
+        JPanel formulario = new JPanel(new GridLayout(0, 2, 5, 5));
+        formulario.add(new JLabel("Nome:"));
+        formulario.add(campoNome);
+        formulario.add(new JLabel("Cidade:"));
+        formulario.add(campoCidade);
+
+        while (true) {
+            int resposta = JOptionPane.showConfirmDialog(this, formulario, "Novo clube",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (resposta != JOptionPane.OK_OPTION) {
+                return;                                   // o usuário cancelou
             }
-            String cidade = JOptionPane.showInputDialog(this, "Cidade:");
-            if (cidade == null) {
-                return;
+            try {
+                clubeService.criar(campoNome.getText().trim(), campoCidade.getText().trim());
+                atualizarTabela();
+                return;                                   // deu certo
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                // o laço repete: o formulário volta com os campos como o usuário deixou
             }
-            clubeService.criar(nome.trim(), cidade.trim());
-            atualizarTabela();
-        } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -46,24 +46,45 @@ class MenuPrincipalGUI extends JFrame implements MenuPrincipal {
         add(botaoCarregar);
     }
 
-    /** Só mostra a janela (na thread do Swing); quem mantém o programa vivo é o laço de eventos. */
+    /**
+     * Só mostra a janela (na thread do Swing); quem mantém o programa vivo é o laço de eventos.
+     */
     @Override
     public void exibir() {
         SwingUtilities.invokeLater(() -> setVisible(true));
     }
 
-    /** Salva os dados e mostra uma mensagem de sucesso ou o erro ocorrido. */
+    /**
+     * Salva os dados e mostra uma mensagem de sucesso ou o erro ocorrido.
+     */
     private void salvar() {
+        int resposta = JOptionPane.showConfirmDialog(this,
+                "Isso substitui o arquivo salvo anteriormente. Continuar?",
+                "Confirmar", JOptionPane.YES_NO_OPTION);
+
+        if (resposta != JOptionPane.YES_OPTION) {
+            return;
+        }
         try {
             persistenciaService.salvar();
             JOptionPane.showMessageDialog(this, "Dados salvos.");
+
         } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    /** Carrega os dados do arquivo e mostra uma mensagem de sucesso ou o erro ocorrido. */
+    /**
+     * Carrega os dados do arquivo e mostra uma mensagem de sucesso ou o erro ocorrido.
+     */
     private void carregar() {
+        int resposta = JOptionPane.showConfirmDialog(this,
+                "Os dados não salvos serão perdidos. Continuar?",
+                "Confirmar", JOptionPane.YES_NO_OPTION);
+
+        if (resposta != JOptionPane.YES_OPTION) {
+            return;
+        }
         try {
             persistenciaService.carregar();
             JOptionPane.showMessageDialog(this, "Dados carregados.");
