@@ -2,6 +2,7 @@ package jogador.domain;
 
 /** Jogador de linha: especialização de Jogador que acrescenta a posição em campo (PosicaoLinha). */
 public class JogadorLinha extends Jogador {
+    private static final long serialVersionUID = 1L;
     private PosicaoLinha posicao;
 
     public JogadorLinha(int id, String nome, int idade, int numeroCamisa, PosicaoLinha posicao) {

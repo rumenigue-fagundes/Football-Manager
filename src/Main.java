@@ -22,8 +22,8 @@ public class Main {
         // Arquivo onde os dados são gravados (a pasta "dados" é criada ao salvar).
         Path arquivo = Paths.get("dados", "futebol.dat");
         // Os dois repositórios compartilham os mesmos dados, para clubes e jogadores serem gravados juntos.
-        // Os dados só são lidos quando o usuário escolhe Carregar no menu.
         DadosSistema dados = new DadosSistema();
+        // Os dados só são lidos quando o usuário escolhe Carregar no menu.
         Repositorio<Clube> repositorioClubes =
                 new RepositorioArquivo<>(dados, DadosSistema::getClubes, Clube::getId, arquivo);
         Repositorio<Jogador> repositorioJogadores =

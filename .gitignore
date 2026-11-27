@@ -28,3 +28,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/dados_teste/
+/dados_manual/
+/dados/

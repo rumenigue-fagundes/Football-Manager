@@ -70,13 +70,13 @@ class TelaClubesGUI extends JDialog implements TelaClubes {
         botaoExcluir.addActionListener(e -> excluir());
         painel.add(botaoExcluir);
 
-        JButton botaoFechar = new JButton("Fechar");
-        botaoFechar.addActionListener(e -> dispose());
-        painel.add(botaoFechar);
-
         JButton botaoElenco = new JButton("Ver elenco");
         botaoElenco.addActionListener(e -> verElenco());
         painel.add(botaoElenco);
+
+        JButton botaoFechar = new JButton("Fechar");
+        botaoFechar.addActionListener(e -> dispose());
+        painel.add(botaoFechar);
 
         return painel;
     }

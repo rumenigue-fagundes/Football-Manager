@@ -31,7 +31,7 @@ class TelaClubesTextual implements TelaClubes {
             System.out.println("2. Criar clube");
             System.out.println("3. Editar clube");
             System.out.println("4. Excluir Clube");
-            System.out.println("5. Excluir Clube");
+            System.out.println("5. Visualizar elenco");
             System.out.println("0. Voltar");
             String op = ler("Opção");
 
@@ -51,6 +51,7 @@ class TelaClubesTextual implements TelaClubes {
                         break;
                     case "5":
                         verElenco();
+                        break;
                     case "0":
                         return;
                     default:
